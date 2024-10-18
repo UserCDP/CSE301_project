@@ -66,10 +66,24 @@ go_down (Hole,t)    = Nothing            -- (root => no parent)
 -- such as say grafting another tree off to the left or right of the
 -- the subtree in focus.
 
-graft_left :: Bin a -> BinZip a -> BinZip a
-graft_left  g (c,t) = (c,B x g t)
-graft_right :: Bin a -> BinZip a -> BinZip a
-graft_right g (c,t) = (c,B x t g)
+
+-- A function that checks in the value at the node
+
+val1 :: Bin a -> a
+val1 (L x) = x
+val1 (B x _ _) = x
+
+val :: BinZip a -> a
+val (_,b) = val1 b
+
+
+--- A function to insert a new value at a node
+
+insertVal :: BinZip a -> a -> BinZip a
+insertVal (c, B x t1 t2) y = (c, B y t1 t2)
+insertVal (c, L x) y = (c, L y)
+
+
 
 -- Finally, we include some pretty-printing routines for binary trees
 -- and binary tree zippers.
@@ -80,13 +94,13 @@ graft_right g (c,t) = (c,B x t g)
 -- BinCxt as a function Tree String -> Tree String.
 
 treeFromBin :: Show a => Bin a -> Tree String
-treeFromBin (L x)     = Node (show x) []
-treeFromBin (B t1 t2) = Node (show x) [treeFromBin t1,treeFromBin t2]
+treeFromBin (L x)     = Node "*" []
+treeFromBin (B x t1 t2) = Node "*" [treeFromBin t1,treeFromBin t2]
 
 treeCxtFromBinCxt :: Show a => BinCxt a -> Tree String -> Tree String
 treeCxtFromBinCxt Hole      t = t
-treeCxtFromBinCxt (B0 x c t2) t = treeCxtFromBinCxt c (Node (show x) [t, treeFromBin t2])
-treeCxtFromBinCxt (B1 x t1 c) t = treeCxtFromBinCxt c (Node (show x) [treeFromBin t1, t])
+treeCxtFromBinCxt (B0 x c t2) t = treeCxtFromBinCxt c (Node "*" [t, treeFromBin t2])
+treeCxtFromBinCxt (B1 x t1 c) t = treeCxtFromBinCxt c (Node "*" [treeFromBin t1, t])
 
 treeFromBinZip :: Show a => BinZip a -> Tree String
 treeFromBinZip (c,t) = treeCxtFromBinCxt c (t'{rootLabel=rootLabel t' ++ marker})
