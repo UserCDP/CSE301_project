@@ -1,6 +1,6 @@
 module Parser (runParser, parseCmd, parseInput) where
 
-import Cmd
+import GameData
 
 import Data.Maybe
 import Data.Char
@@ -110,7 +110,7 @@ parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseAction
 parseClimb :: Parser String Cmd
 parseClimb = do
   match "climb" <|> match "go"
-  (match "down" >> return Go_Down) <|>
+  (match "up" >> return Go_Up) <|>
    (match "left" >> return Go_Left) <|>
    (match "right" >> return Go_Right)
 
@@ -126,8 +126,8 @@ parseMeditate = do
 -- Parse an action command
 parseAction:: Parser String Cmd
 parseAction = do
-  match "pick_up" <|> match "use"
-  return Action
+  match "use"
+  return Interact
 
 -- Parse a quit command
 parseQuit :: Parser String Cmd

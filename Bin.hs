@@ -84,6 +84,12 @@ insertVal (c, B x t1 t2) y = (c, B y t1 t2)
 insertVal (c, L x) y = (c, L y)
 
 
+--- A function that tells if you are at leaf
+
+atLeaf :: BinZip a -> Bool
+atLeaf (c, L _) = True
+atLeaf (c, B _ _ _) = False
+
 
 -- Finally, we include some pretty-printing routines for binary trees
 -- and binary tree zippers.
