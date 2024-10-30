@@ -10,10 +10,9 @@ getItemId (Key x) = x
 getItemId (Trapdoor x) = x
 
 
-getItemTypeAtNode :: BinZip Item -> String 
-getItemTypeAtNode z = case val z of 
+getItemType :: Item -> String 
+getItemType z = case z of 
   Key _ -> "Key"
   Trapdoor _ -> "Trapdoor"
-  N -> "Nothing"
-
+  N -> ""
 

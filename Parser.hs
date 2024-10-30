@@ -104,7 +104,7 @@ number = do
 -- parseCmd is our general-purpose parser for commands, which can be
 -- either climbing commands, meditation commands, or quitting.
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseAction
+parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseAction <|> parseShowOxigen <|> parseHelp 
 
 -- Parse a climbing command.
 parseClimb :: Parser String Cmd
@@ -134,6 +134,16 @@ parseQuit :: Parser String Cmd
 parseQuit = do
   match "quit" <|> match "q"
   return Quit
+
+parseHelp :: Parser String Cmd
+parseHelp = do
+  match "help" <|> match "h"
+  return Help
+
+parseShowOxigen :: Parser String Cmd
+parseShowOxigen = do
+  match "o" <|> match "oxigen"
+  return Show_Oxigen
 
 -- Finally, we export a function that runs a parser on the entire input string, broken up into words.
 -- This function runs in any MonadFail monad, to deal with the possiblity of failure.

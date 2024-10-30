@@ -3,6 +3,8 @@ module Cmd where
 import GameData
 import Items
 import Bin
+import Scripts
+import Messages
 
 
 
@@ -13,74 +15,89 @@ executeCommand (Just Go_Right) = goRight
 executeCommand (Just Go_Up) = goUp
 executeCommand (Just Interact) = useItem
 executeCommand (Just Quit) = quitGame
-executeCommand Nothing = doNothing
+executeCommand (Just Show_Oxigen) = showOxigen
+executeCommand (Just Help) = helpGamer
+executeCommand Nothing = retakeCommand
 
 
 --- Implement movement commands
 goLeft :: Game -> IO Game
-goLeft game = if getItemTypeAtNode (pos game) == "Trapdoor" then do
-                putStrLn "Can't go through locked door"
-                return game {newPos = False}
+goLeft game = if getItemType (getCurrentItem game) == "Trapdoor" then do
+                displayString "blocked door"
+                return game
                 else
                   case pos game of
-                    (c,B x t1 t2) -> return game { pos = (B0 x c t2,t1), newPos = True} -- climb up to the left
-                    (c,L _) -> do
-                      putStrLn "You cannot climb any further."
-                      return game {newPos = False}
+                    (c, B _ Empty _ ) -> do
+                      displayString "out of bounds"
+                      return game
+                    (c,B x t1 t2) -> return game { pos = incrementNodeVisits (B0 x c t2,t1), newPos = True} 
+                    
 
 goRight :: Game -> IO Game
-goRight game = if getItemTypeAtNode (pos game) == "Trapdoor" then do
-                putStrLn "Can't go through locked door"
-                return game {newPos = False}
+goRight game = if getItemType (getCurrentItem game) == "Trapdoor" then do
+                displayString "blocked door"
+                return game
                 else
                   case pos game of
-                    (c,B x t1 t2) -> return game { pos = (B1 x t1 c,t2), newPos = True} -- climb up to the left
-                    (c,L _) -> do
-                      putStrLn "You cannot climb any further."
-                      return game {newPos = False}
+                    (c, B _ _ Empty ) -> do
+                      displayString "out of bounds"
+                      return game
+                    (c,B x t1 t2) -> return game { pos = incrementNodeVisits (B1 x t1 c,t2), newPos = True} 
 
 goUp :: Game -> IO Game
 goUp game = case pos game of
-    (B0 x c t2,t) -> return game { pos = (c,B x t t2), newPos = True}            -- climb down from the left, or
-    (B1 x t1 c,t) -> return game { pos = (c,B x t1 t), newPos = True}            -- climb down from the right, or
-    (Hole,t) -> do                                                               -- already at the root
-         putStrLn "Find another way"
-         return game {newPos = False}
+    (B0 x c t2,t) -> return game { pos = incrementNodeVisits (c,B x t t2), newPos = True}           
+    (B1 x t1 c,t) -> return game { pos = incrementNodeVisits (c,B x t1 t), newPos = True}            
+    (Hole,t) -> do                                                                                   
+         displayString "blocked entrance"
+         return game
 
 
 --- Implement Interact commands
                 
 useItem :: Game -> IO Game
-useItem game = case val (pos game) of
+useItem game = 
+   case getCurrentItem game of
     Key id -> if not (id `elem` inventory game) then do
-        putStrLn "You picked up a new key"
-        return game { pos = insertVal (pos game) N, inventory = (id : inventory game), newPos = False }
-        else return game {newPos = False}
+        displayString "new key" 
+        return game { pos = consumeItemAtNode (pos game), inventory = (id : inventory game)}
+        else return game
   
     Trapdoor id -> if (id`elem` inventory game) then do
-        putStrLn "Door unlocked"
-        return game { pos = insertVal (pos game) N, newPos = False }
+        displayString "unlocked"
+        return game { pos = consumeItemAtNode (pos game)}
         else do
-             putStrLn "Door locked"
-             return game {newPos = False}          
+             displayString "locked"
+             return game          
 
-    N -> return game {newPos = False}
-
-
+    N -> return game
+    
+    
 --- Miscelaneous
 
 quitGame :: Game -> IO Game
 quitGame game = do
-    putStrLn "Okay."
-    putStrLn "You ended the game over here:\n"
-    putStrLn (drawBinZip (pos game))
-    putStrLn "Goodbye."
+    displayString "quit"
+    putStrLn $ drawBinZip $ getExploredMap $ pos game
     return game {gameOver = True}
 
-doNothing :: Game -> IO Game
-doNothing game = do
-    putStrLn "I'm sorry, I do not understand."
-    return game {newPos = False}
+retakeCommand :: Game -> IO Game
+retakeCommand game = do
+    displayString "parseError"
+    return game
+
+helpGamer :: Game -> IO Game
+helpGamer game = do
+    displayString "helpString"
+    return game
+
+showOxigen :: Game -> IO Game
+showOxigen game = do
+  ox <- getOxigen game
+  displayStringWithVal "oxigenLeft" ox
+  return game
+
+
 
 
 
