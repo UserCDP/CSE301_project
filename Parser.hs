@@ -4,7 +4,7 @@ import GameData
 
 import Data.Maybe
 import Data.Char
-
+import Items
 import Control.Applicative
 
 -- We begin by defining the type of parsers for a type:
@@ -95,16 +95,16 @@ match s = sat (\s' -> map toLower s == map toLower s')
 -- between one and nine).
 number :: Parser String Int
 number = do
-  (match "one" >> return 1)    <|> (match "two" >> return 2) <|>
-   (match "three" >> return 3) <|> (match "four" >> return 4) <|>
-   (match "five" >> return 5)  <|> (match "six" >> return 6) <|>
-   (match "seven" >> return 7) <|> (match "eight" >> return 8) <|>
-   (match "nine" >> return 9)
+  (match "one" <|> match "1" >> return 1)    <|> (match "two" <|> match "2" >> return 2) <|>
+   (match "three" <|> match "3" >> return 3) <|> (match "four" <|> match "4" >> return 4) <|>
+   (match "five" <|> match"5" >> return 5)  <|> (match "six" <|> match "6" >> return 6) <|>
+   (match "seven" <|> match "7" >> return 7) <|> (match "eight" <|> match "8" >> return 8) <|>
+   (match "nine" <|> match "9" >> return 9)
 
 -- parseCmd is our general-purpose parser for commands, which can be
 -- either climbing commands, meditation commands, or quitting.
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseAction <|> parseShowOxigen <|> parseHelp 
+parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseShowOxigen <|> parseHelp <|> parseUseItem <|> parseGetItem 
 
 -- Parse a climbing command.
 parseClimb :: Parser String Cmd
@@ -124,10 +124,20 @@ parseMeditate = do
   return (Meditate n)
 
 -- Parse an action command
-parseAction:: Parser String Cmd
-parseAction = do
-  match "use"
-  return Interact
+parseUseItem :: Parser String Cmd
+parseUseItem = do
+  match "use" <|> match "check"
+  n <- number
+  (match "key" >> return (Use (Key n))) <|>
+   (match "shovel" >> return (Use Shovel)) <|>
+   (match "map" >> return (Use (Map n)))
+
+parseGetItem :: Parser String Cmd 
+parseGetItem = do
+  match "get" <|> match "check"
+  match "key" <|> match "chest"
+  return PickUp
+
 
 -- Parse a quit command
 parseQuit :: Parser String Cmd

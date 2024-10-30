@@ -5,6 +5,7 @@ import Items
 import Bin
 import Scripts
 import Messages
+import ItemsLogic
 
 
 
@@ -13,7 +14,8 @@ executeCommand :: Maybe Cmd -> (Game -> IO Game)
 executeCommand (Just Go_Left) = goLeft
 executeCommand (Just Go_Right) = goRight
 executeCommand (Just Go_Up) = goUp
-executeCommand (Just Interact) = useItem
+executeCommand (Just (Use x) ) = useItem x
+executeCommand (Just PickUp ) = getItem 
 executeCommand (Just Quit) = quitGame
 executeCommand (Just Show_Oxigen) = showOxigen
 executeCommand (Just Help) = helpGamer
@@ -22,8 +24,8 @@ executeCommand Nothing = retakeCommand
 
 --- Implement movement commands
 goLeft :: Game -> IO Game
-goLeft game = if getItemType (getCurrentItem game) == "Trapdoor" then do
-                displayString "blocked door"
+goLeft game = if getItemType (getCurrentItem game) == "Debris" then do
+                displayString "blocked way"
                 return game
                 else
                   case pos game of
@@ -34,8 +36,8 @@ goLeft game = if getItemType (getCurrentItem game) == "Trapdoor" then do
                     
 
 goRight :: Game -> IO Game
-goRight game = if getItemType (getCurrentItem game) == "Trapdoor" then do
-                displayString "blocked door"
+goRight game = if getCurrentItemType game == "Debris" then do
+                displayString "blocked way"
                 return game
                 else
                   case pos game of
@@ -54,24 +56,26 @@ goUp game = case pos game of
 
 
 --- Implement Interact commands
-                
-useItem :: Game -> IO Game
-useItem game = 
-   case getCurrentItem game of
-    Key id -> if not (id `elem` inventory game) then do
-        displayString "new key" 
-        return game { pos = consumeItemAtNode (pos game), inventory = (id : inventory game)}
-        else return game
   
-    Trapdoor id -> if (id`elem` inventory game) then do
-        displayString "unlocked"
-        return game { pos = consumeItemAtNode (pos game)}
-        else do
-             displayString "locked"
-             return game          
+                
+useItem :: Item -> Game -> IO Game
+useItem x game = 
+   case getItemType x of
+    "Key" -> useKey x game
+    "Shovel" -> useShovel game
+    _ -> do
+      displayString "dont have object"
+      return game
 
-    N -> return game
     
+getItem :: Game -> IO Game
+getItem game =
+  case getCurrentItemType game of
+    "Key" -> pickUpKey game
+    "Chest" -> checkChest game
+    _ -> do
+      displayString "no objects"
+      return game
     
 --- Miscelaneous
 
