@@ -99,18 +99,19 @@ number = do
    (match "three" <|> match "3" >> return 3) <|> (match "four" <|> match "4" >> return 4) <|>
    (match "five" <|> match"5" >> return 5)  <|> (match "six" <|> match "6" >> return 6) <|>
    (match "seven" <|> match "7" >> return 7) <|> (match "eight" <|> match "8" >> return 8) <|>
-   (match "nine" <|> match "9" >> return 9)
+   (match "nine" <|> match "9" >> return 9) <|> (match "zero" <|> match "0" >> return 0)
 
 -- parseCmd is our general-purpose parser for commands, which can be
 -- either climbing commands, meditation commands, or quitting.
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseShowOxigen <|> parseHelp <|> parseUseItem <|> parseGetItem  <|> parseCheckInventory <|> parseUseOxigenTank
+parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseShowOxygen <|> 
+           parseHelp <|> parseUseItem <|> parseGetItem  <|> parseCheckInventory <|> parseUseOxygenTank
 
 -- Parse a climbing command.
 parseClimb :: Parser String Cmd
 parseClimb = do
   match "climb" <|> match "go"
-  (match "up" >> return Go_Up) <|>
+  (match "down" >> return Go_Down) <|>
    (match "left" >> return Go_Left) <|>
    (match "right" >> return Go_Right)
 
@@ -145,8 +146,8 @@ parseUseItem = do
 
 parseGetItem :: Parser String Cmd 
 parseGetItem = do
-  match "get" <|> match "check"
-  match "it"
+  match "get" <|> match "pick up" <|> match "pickup"
+  match "key" <|> match "item" <|> match "shovel"
   return PickUp
 
 
@@ -166,17 +167,17 @@ parseHelp = do
   match "help" <|> match "h"
   return Help
 
-parseShowOxigen :: Parser String Cmd
-parseShowOxigen = do
-  match "o" <|> match "oxigen"
-  return Show_Oxigen
+parseShowOxygen :: Parser String Cmd
+parseShowOxygen = do
+  match "o" <|> match "oxygen"
+  return Show_Oxygen
 
-parseUseOxigenTank :: Parser String Cmd
-parseUseOxigenTank = do
+parseUseOxygenTank :: Parser String Cmd
+parseUseOxygenTank = do
   match "use"
-  match "oxigen" <|> match "o"
+  match "oxygen" <|> match "o"
   n <- number
-  return (Use (OxigenTank n))
+  return (Use (OxygenTank n))
 
 -- Finally, we export a function that runs a parser on the entire input string, broken up into words.
 -- This function runs in any MonadFail monad, to deal with the possiblity of failure.
