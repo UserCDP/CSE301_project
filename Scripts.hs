@@ -12,12 +12,12 @@ import Data.Time.Clock
 --- Reseting the game
 
 a_tree :: Bin Item
-a_tree = B N (B N (B N (B (Key 1) Empty Empty) (B (Chest False 1 [Shovel]) Empty Empty)) (B (Debris) (B N Empty Empty) (B N Empty Empty ))) (B N Empty Empty)
+a_tree = B N (B N (B N (B (Key 1) Empty Empty) (B (Chest False 1 [Shovel, OxigenTank 1]) Empty Empty)) (B (Debris) (B N Empty Empty) (B N Empty Empty ))) (B N Empty Empty)
 
 resetGame :: Bin Item -> IO Game
 resetGame a = do
     x <- getCurrentTime
-    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x}
+    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxigenBoost = 0}
 
 
 ---- The Oxigen Logic
@@ -26,7 +26,7 @@ getOxigen :: Game -> IO Double
 getOxigen game = do
     now <- getCurrentTime
     let ox = realToFrac (diffUTCTime now (initialTime game))
-    return (maxOxigen - ox)
+    return (maxOxigen - ox + oxigenBoost game) 
 
 
 checkOxigen :: Game -> IO ()
@@ -47,8 +47,9 @@ getItemAtNode b = item (getValAtNode b)
 getVisitsAtNode :: BinZip NodeInfo -> Int
 getVisitsAtNode b = visits (getValAtNode b)
 
-removeItemAtNode :: BinZip NodeInfo ->BinZip NodeInfo
+removeItemAtNode :: BinZip NodeInfo -> BinZip NodeInfo
 removeItemAtNode b = insertValAtNode b ((getValAtNode b) {item = N})
+
 
 unlockChestAtNode :: BinZip NodeInfo -> BinZip NodeInfo
 unlockChestAtNode b = 

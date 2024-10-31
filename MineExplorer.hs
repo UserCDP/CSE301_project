@@ -10,7 +10,6 @@ import Control.Concurrent.Async (race)
 import System.Timeout (timeout)
 
 
-
 --- The game loop.     
 
 go :: Game -> IO (Maybe Game)

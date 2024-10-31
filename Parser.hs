@@ -104,7 +104,7 @@ number = do
 -- parseCmd is our general-purpose parser for commands, which can be
 -- either climbing commands, meditation commands, or quitting.
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseShowOxigen <|> parseHelp <|> parseUseItem <|> parseGetItem 
+parseCmd = parseClimb <|> parseMeditate <|> parseQuit <|> parseShowOxigen <|> parseHelp <|> parseUseItem <|> parseGetItem  <|> parseCheckInventory <|> parseUseOxigenTank
 
 -- Parse a climbing command.
 parseClimb :: Parser String Cmd
@@ -123,21 +123,37 @@ parseMeditate = do
   if n == 1 then match "second" else match "seconds"
   return (Meditate n)
 
+parseUseKey :: Parser String Cmd
+parseUseKey = do
+  match "use" <|> match "try"
+  match "key"
+  n <- number
+  return (Use (Key n))
+
+parseUseMap :: Parser String Cmd
+parseUseMap = do
+  match "check"
+  match "map"
+  n <- number
+  return (Use (Map n))
+
+
 -- Parse an action command
 parseUseItem :: Parser String Cmd
 parseUseItem = do
-  match "use" <|> match "check"
-  n <- number
-  (match "key" >> return (Use (Key n))) <|>
-   (match "shovel" >> return (Use Shovel)) <|>
-   (match "map" >> return (Use (Map n)))
+  parseUseKey <|> (match "use" >> match "shovel" >> return (Use Shovel)) <|> parseUseMap 
 
 parseGetItem :: Parser String Cmd 
 parseGetItem = do
   match "get" <|> match "check"
-  match "key" <|> match "chest"
+  match "it"
   return PickUp
 
+
+parseCheckInventory :: Parser String Cmd 
+parseCheckInventory = do
+  (match "check" >> match "inventory" >> return Check_Inventory) <|> (match "i" >> return Check_Inventory)
+  
 
 -- Parse a quit command
 parseQuit :: Parser String Cmd
@@ -154,6 +170,13 @@ parseShowOxigen :: Parser String Cmd
 parseShowOxigen = do
   match "o" <|> match "oxigen"
   return Show_Oxigen
+
+parseUseOxigenTank :: Parser String Cmd
+parseUseOxigenTank = do
+  match "use"
+  match "oxigen" <|> match "o"
+  n <- number
+  return (Use (OxigenTank n))
 
 -- Finally, we export a function that runs a parser on the entire input string, broken up into words.
 -- This function runs in any MonadFail monad, to deal with the possiblity of failure.

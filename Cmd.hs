@@ -16,6 +16,7 @@ executeCommand (Just Go_Right) = goRight
 executeCommand (Just Go_Up) = goUp
 executeCommand (Just (Use x) ) = useItem x
 executeCommand (Just PickUp ) = getItem 
+executeCommand (Just Check_Inventory) = checkInventory
 executeCommand (Just Quit) = quitGame
 executeCommand (Just Show_Oxigen) = showOxigen
 executeCommand (Just Help) = helpGamer
@@ -63,6 +64,7 @@ useItem x game =
    case getItemType x of
     "Key" -> useKey x game
     "Shovel" -> useShovel game
+    "Oxigen" -> useOxigenTank x game
     _ -> do
       displayString "dont have object"
       return game
@@ -76,6 +78,15 @@ getItem game =
     _ -> do
       displayString "no objects"
       return game
+
+checkInventory :: Game -> IO Game
+checkInventory game =
+  if null (inventory game) then do
+    displayString "empty inventory"
+    return game
+  else do
+    putStrLn $ getString "inventory contains" ++ showItemList (inventory game)
+    return game
     
 --- Miscelaneous
 

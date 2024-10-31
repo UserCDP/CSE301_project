@@ -4,6 +4,7 @@ import Items
 import GameData
 import Messages
 import Scripts
+import Data.List
 
 pickUpKey :: Game -> IO Game
 pickUpKey game =  
@@ -76,6 +77,17 @@ useShovel game =
         (False, _ ) -> do
             displayString "no shovel"
             return game
+
+useOxigenTank :: Item -> Game -> IO Game
+useOxigenTank (OxigenTank ox ) game = do
+  if OxigenTank ox `elem` (inventory game) then do
+    displayString "used oxigen tank"
+    return game{inventory = delete (OxigenTank ox) (inventory game), oxigenBoost = oxigenBoost game + 100}
+  else do
+    displayString "dont have oxigen tank"
+    return game
+
+  
 
         
     

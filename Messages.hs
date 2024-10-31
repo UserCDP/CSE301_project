@@ -41,8 +41,12 @@ messagesDict =
     Map.insert "" "Explore further" $
     Map.insert "no objects" "Nothing of use here ... "  $
     Map.insert "dont have object" "You dont have that object" $
+    Map.insert "empty inventory" "Your inventory is currently empty " $
+    Map.insert "inventory contains" "Your inventory contains: "$
     Map.insert "suffocated" "\n You suffocated to death :(" $
     Map.insert "oxigenLeft" "Oxigen left: " $
+    Map.insert "used oxigen tank" "Oxigen tank consumed" $
+    Map.insert "dont have oxigen tank" "You dont have that oxigen tank" $
     Map.insert "pula" "pizda" Map.empty
     
 

@@ -4,6 +4,8 @@ import Bin
 import System.IO
 
 data Item = N | Key Id | Debris | Chest Bool Id [Item] | Shovel | Map Id | OxigenTank Id   deriving (Show, Read, Eq)
+
+
 type Id = Int
 
 
@@ -28,4 +30,8 @@ getItemId x =
 
 checkListContainsItemType :: String -> [Item] -> Bool
 checkListContainsItemType x l = x `elem` (map (\z -> getItemType z) l)
+
+showItemList :: [Item] -> String
+showItemList (x:[]) = show x
+showItemList (x : xs) = show x ++ ", " ++ showItemList xs 
 
