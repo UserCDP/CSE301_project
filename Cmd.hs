@@ -13,12 +13,12 @@ import ItemsLogic
 executeCommand :: Maybe Cmd -> (Game -> IO Game)
 executeCommand (Just Go_Left) = goLeft
 executeCommand (Just Go_Right) = goRight
-executeCommand (Just Go_Up) = goUp
+executeCommand (Just Go_Down) = goDown
 executeCommand (Just (Use x) ) = useItem x
 executeCommand (Just PickUp ) = getItem 
 executeCommand (Just Check_Inventory) = checkInventory
 executeCommand (Just Quit) = quitGame
-executeCommand (Just Show_Oxigen) = showOxigen
+executeCommand (Just Show_Oxygen) = showOxygen
 executeCommand (Just Help) = helpGamer
 executeCommand Nothing = retakeCommand
 
@@ -47,8 +47,8 @@ goRight game = if getCurrentItemType game == "Debris" then do
                       return game
                     (c,B x t1 t2) -> return game { pos = incrementNodeVisits (B1 x t1 c,t2), newPos = True} 
 
-goUp :: Game -> IO Game
-goUp game = case pos game of
+goDown :: Game -> IO Game
+goDown game = case pos game of
     (B0 x c t2,t) -> return game { pos = incrementNodeVisits (c,B x t t2), newPos = True}           
     (B1 x t1 c,t) -> return game { pos = incrementNodeVisits (c,B x t1 t), newPos = True}            
     (Hole,t) -> do                                                                                   
@@ -64,7 +64,7 @@ useItem x game =
    case getItemType x of
     "Key" -> useKey x game
     "Shovel" -> useShovel game
-    "Oxigen" -> useOxigenTank x game
+    "Oxygen" -> useOxygenTank x game
     _ -> do
       displayString "dont have object"
       return game
@@ -106,12 +106,11 @@ helpGamer game = do
     displayString "helpString"
     return game
 
-showOxigen :: Game -> IO Game
-showOxigen game = do
-  ox <- getOxigen game
-  displayStringWithVal "oxigenLeft" ox
+showOxygen :: Game -> IO Game
+showOxygen game = do
+  ox <- getOxygen game
+  displayStringWithVal "oxygenLeft" ox
   return game
-
 
 
 
