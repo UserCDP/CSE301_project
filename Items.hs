@@ -3,7 +3,7 @@ module Items where
 import Bin
 import System.IO
 
-data Item = N | Key Id | Debris | Chest Bool Id [Item] | Shovel | Map Id | OxigenTank Id   deriving (Show, Read, Eq)
+data Item = N | Key Id | Debris | Chest Bool Id [Item] | Shovel | Map Id | OxygenTank Id   deriving (Show, Read, Eq)
 
 
 type Id = Int
@@ -16,7 +16,7 @@ getItemType z = case z of
   Debris -> "Debris"
   Shovel -> "Shovel"
   Map _ -> "Map"
-  OxigenTank _ -> "Oxigen"
+  OxygenTank _ -> "Oxygen"
   N -> ""
 
 
@@ -26,7 +26,7 @@ getItemId x =
     Key id -> id
     Chest _ id _ -> id
     Map id -> id
-    OxigenTank id -> id
+    OxygenTank id -> id
 
 checkListContainsItemType :: String -> [Item] -> Bool
 checkListContainsItemType x l = x `elem` (map (\z -> getItemType z) l)
@@ -34,4 +34,3 @@ checkListContainsItemType x l = x `elem` (map (\z -> getItemType z) l)
 showItemList :: [Item] -> String
 showItemList (x:[]) = show x
 showItemList (x : xs) = show x ++ ", " ++ showItemList xs 
-
