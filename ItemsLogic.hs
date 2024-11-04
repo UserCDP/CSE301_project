@@ -78,11 +78,11 @@ useShovel game =
             displayString "no shovel"
             return game
 
-useOxygenTank :: Item -> Game -> IO Game
-useOxygenTank (OxygenTank ox ) game = do
-  if OxygenTank ox `elem` (inventory game) then do
-    displayString "used oxygen tank"
-    return game{inventory = delete (OxygenTank ox) (inventory game), oxygenBoost = oxygenBoost game + 100}
+useOxigenTank :: Item -> Game -> IO Game
+useOxigenTank (OxigenTank ox ) game = do
+  if OxigenTank ox `elem` (inventory game) then do
+    displayString "used oxigen tank"
+    return game{inventory = delete (OxigenTank ox) (inventory game), oxigenBoost = oxigenBoost game + 100}
   else do
-    displayString "dont have oxygen tank"
+    displayString "dont have oxigen tank"
     return game

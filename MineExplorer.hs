@@ -18,7 +18,7 @@ go game1 = do
   let game = game1 {newPos = False}
   putStr "> "                                      
   hFlush stdout
-  result <- race (checkOxygen game) getLine  
+  result <- race (checkOxigen game) getLine  
   case result of
     Left _ -> return Nothing
     Right line -> do

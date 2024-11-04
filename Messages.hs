@@ -14,7 +14,7 @@ messagesDict =
     Map.insert "blocked entrance" "Find another way " $
     Map.insert "new key" "You picked up a new key " $
     Map.insert "unlocked chest" "Chest unlocked " $
-    Map.insert "wrong key" "key doesn't work, perhaps try another one " $
+    Map.insert "wrong key" "Key doesn't work, perhaps try another one " $
     Map.insert "chest already open""The chest is already open " $
     Map.insert "nothing to open" "There's nothing to open " $
     Map.insert "emptying chest" "Picked up chest content" $
@@ -28,7 +28,7 @@ messagesDict =
     Map.insert "no shovel" "You dont have any shovels " $
     Map.insert "quit" "Quiting already?\n Here's the progress:" $
     Map.insert "parseError" "Sorry, I don't understand" $
-    Map.insert "helpString" "Use 'go' to move down, left or right such as 'go left' or 'go down'." $
+    Map.insert "helpString" "Use 'go' to move up, left or right such as 'go left' or 'go up'." $
     Map.insert "Debris" "The way is blocked by debris. Use a Shovel ..." $
     Map.insert "Key" "There's a key here, it might be useful ..." $
     Map.insert "Locked Chest" "There is a locked chest here. Go find a key to open it ..." $
@@ -43,9 +43,9 @@ messagesDict =
     Map.insert "empty inventory" "Your inventory is currently empty " $
     Map.insert "inventory contains" "Your inventory contains: "$
     Map.insert "suffocated" "\n You suffocated to death :(" $
-    Map.insert "oxygenLeft" "Oxygen left: " $
-    Map.insert "used oxygen tank" "Oxygen tank consumed" $
-    Map.insert "dont have oxygen tank" "You dont have that oxygen tank" $
+    Map.insert "oxigenLeft" "Oxigen left: " $
+    Map.insert "used oxigen tank" "Oxigen tank consumed" $
+    Map.insert "dont have oxigen tank" "You dont have that oxigen tank" $
     Map.insert "pula" "pizda" Map.empty
     
 

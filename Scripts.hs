@@ -12,31 +12,31 @@ import Data.Time.Clock
 --- Reseting the game
 
 a_tree :: Bin Item
-a_tree = B N (B N (B N (B (Key 1) Empty Empty) (B (Chest False 1 [Shovel, OxygenTank 1]) Empty Empty)) (B (Debris) (B N Empty Empty) (B N Empty Empty ))) (B N Empty Empty)
+a_tree = B N (B N (B N (B (Key 1) Empty Empty) (B (Chest False 1 [Shovel, OxigenTank 1]) Empty Empty)) (B (Debris) (B N Empty Empty) (B N Empty Empty ))) (B N Empty Empty)
 
 resetGame :: Bin Item -> IO Game
 resetGame a = do
     x <- getCurrentTime
-    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygenBoost = 0}
+    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxigenBoost = 0}
 
 
 ---- The Oxygen Logic
 
-getOxygen :: Game -> IO Double
-getOxygen game = do
+getOxigen :: Game -> IO Double
+getOxigen game = do
     now <- getCurrentTime
     let ox = realToFrac (diffUTCTime now (initialTime game))
-    return (maxOxygen - ox + oxygenBoost game) 
+    return (maxOxigen - ox + oxigenBoost game) 
 
 
-checkOxygen :: Game -> IO ()
-checkOxygen game = do
-    ox <- getOxygen game
+checkOxigen :: Game -> IO ()
+checkOxigen game = do
+    ox <- getOxigen game
     if ox < 0 
         then do
              displayString "suffocated"
              return ()
-    else checkOxygen game
+    else checkOxigen game
 
 
 ---- Funtions manipulating nodes

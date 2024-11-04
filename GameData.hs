@@ -7,16 +7,16 @@ import Data.Time.Clock
 --- This is the most import data. It holds all the game state
 
 data NodeInfo = NodeInfo {item :: Item, visits :: Int, depth :: Int}
-data Game = Game {gameOver :: Bool, pos :: BinZip NodeInfo, newPos :: Bool, inventory :: [Item], initialTime :: UTCTime, oxygenBoost :: Double}
+data Game = Game {gameOver :: Bool, pos :: BinZip NodeInfo, newPos :: Bool, inventory :: [Item], initialTime :: UTCTime, oxigenBoost :: Double}
 
-data Cmd = Go_Left | Go_Right | Go_Down | Meditate Int | Quit | Use Item | PickUp | Show_Oxygen | Help | Check_Inventory
+data Cmd = Go_Left | Go_Right | Go_Up | Quit | Use Item | PickUp | Show_Oxigen | Help | Check_Inventory
   deriving (Show,Read)
 
 
 ---- Constants
 
-maxOxygen :: Double
-maxOxygen = 300.0
+maxOxigen :: Double
+maxOxigen = 300.0
 
 
 
