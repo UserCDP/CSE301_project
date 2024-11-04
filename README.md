@@ -4,6 +4,12 @@ This is a text based adventure game. You are locked in a mine, represented as a 
 # Concepts implemented so far
 
 ## Understanding the game engine
+
+### How to run the game
+Download the files of the game, go to the directory of the game and run `ghci MineExplorer.hs -package containers base`.
+then run the `main` function. If you have any issues with the packages follow the instructions and then rerun `:l MineExplorer.hs` inside `ghci`.
+
+### How the engine is structured
 The position within the map is stored as a BinTree Zip data type.
 
 Each node of this tree contains a value of type NodeInfo, which is a record keeping track of an item and the number of visits at that node, respectively.
