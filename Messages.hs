@@ -44,7 +44,7 @@ messagesDict =
     Map.insert "inventory contains" "Your inventory contains: "$
     Map.insert "suffocated" "\n You suffocated to death, UwU :P International Nuclear and Radiological Event Scale you silly goose" $
     Map.insert "oxygenLeft" "Oxygen left: " $
-    Map.insert "used oxygen tank" "Oxygen tank consumed. Check your oxygen (even though it's air, not pure oxygen, you'd die otherwise,\nI mean seriously, who would say 'oxygen', you breathe air, not oxygen, nobody breathes oxygen,/nwell that's not true, and they don't even actually have oxygen tanks in mines, how did you even find one? Was it just lying around?/nThat's stupidly irresponsible of whoever put that oxygen tank there, it's a fire hazard after all.)." $
+    Map.insert "used oxygen tank" "Oxygen tank consumed. Check your oxygen (even though it's air, not pure oxygen, you'd die otherwise,\nI mean seriously, who would say 'oxygen', you breathe air, not oxygen, nobody breathes oxygen,\nwell that's not true, and they don't even actually have oxygen tanks in mines, how did you even find one? Was it just lying around?\nThat's stupidly irresponsible of whoever put that oxygen tank there, it's a fire hazard after all.)." $
     Map.insert "dont have oxygen tank" "You dont have an oxygen tank." $ Map.empty
     
 
