@@ -34,7 +34,7 @@ messagesDict =
     Map.insert "Locked Chest" "There is a locked chest here with a key hole." $
     Map.insert "Unlocked Full Chest" "There's an open chest here with items." $
     Map.insert "Unlocked Empty Chest" "There's an empty chest here." $
-    Map.insert "initialVisit" "This seems new or kind of new, like you're visiting it for the first time or first couple of times." $
+    Map.insert "initialVisit" "This seems relatively new." $
     Map.insert "familiarPlace" "This place seems familiar, like you've already visited it." $
     Map.insert "lost" "You've been here already, you're certain." $
     Map.insert "" "" $
