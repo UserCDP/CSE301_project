@@ -18,7 +18,7 @@ executeCommand (Just (Use x) ) = useItem x
 executeCommand (Just PickUp ) = getItem 
 executeCommand (Just Check_Inventory) = checkInventory
 executeCommand (Just Quit) = quitGame
-executeCommand (Just Show_Oxigen) = showOxigen
+executeCommand (Just Show_Oxygen) = showOxygen
 executeCommand (Just Help) = helpGamer
 executeCommand Nothing = retakeCommand
 
@@ -64,7 +64,7 @@ useItem x game =
    case getItemType x of
     "Key" -> useKey x game
     "Shovel" -> useShovel game
-    "Oxigen" -> useOxigenTank x game
+    "Oxygen" -> useOxygenTank x game
     _ -> do
       displayString "dont have object"
       return game
@@ -106,10 +106,10 @@ helpGamer game = do
     displayString "helpString"
     return game
 
-showOxigen :: Game -> IO Game
-showOxigen game = do
-  ox <- getOxigen game
-  displayStringWithVal "oxigenLeft" ox
+showOxygen :: Game -> IO Game
+showOxygen game = do
+  ox <- getOxygen game
+  displayStringWithVal "oxygenLeft" ox
   return game
 
 

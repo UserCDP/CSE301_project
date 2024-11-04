@@ -43,9 +43,9 @@ messagesDict =
     Map.insert "empty inventory" "Your inventory is currently empty " $
     Map.insert "inventory contains" "Your inventory contains: "$
     Map.insert "suffocated" "\n You suffocated to death :(" $
-    Map.insert "oxigenLeft" "Oxigen left: " $
-    Map.insert "used oxigen tank" "Oxigen tank consumed" $
-    Map.insert "dont have oxigen tank" "You dont have that oxigen tank" $
+    Map.insert "oxygenLeft" "Oxygen left: " $
+    Map.insert "used oxygen tank" "Oxygen tank consumed" $
+    Map.insert "dont have oxygen tank" "You dont have that oxygen tank" $
     Map.insert "pula" "pizda" Map.empty
     
 

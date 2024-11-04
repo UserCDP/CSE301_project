@@ -52,7 +52,7 @@ number = do
 -- parseCmd is our general-purpose parser for commands
 
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb  <|> parseQuit <|> parseShowOxigen <|> 
+parseCmd = parseClimb  <|> parseQuit <|> parseShowOxygen <|> 
            parseHelp <|> parseUseItem <|> parseGetItem  <|> parseCheckInventory
 
 
@@ -81,18 +81,18 @@ parseUseMap = do
   n <- number
   return (Use (Map n))
 
-parseUseOxigenTank :: Parser String Cmd
-parseUseOxigenTank = do
+parseUseOxygenTank :: Parser String Cmd
+parseUseOxygenTank = do
   match "use"
-  match "oxigen" <|> match "o"
+  match "oxygen" <|> match "o"
   n <- number
-  return (Use (OxigenTank n))
+  return (Use (OxygenTank n))
 
 
 --- Parse a general use item command 
 parseUseItem :: Parser String Cmd
 parseUseItem = do
-  parseUseKey <|> (match "use" >> match "shovel" >> return (Use Shovel)) <|> parseUseMap <|> parseUseOxigenTank
+  parseUseKey <|> (match "use" >> match "shovel" >> return (Use Shovel)) <|> parseUseMap <|> parseUseOxygenTank
 
 
 -- Parse a general get item command
@@ -118,10 +118,10 @@ parseHelp = do
   return Help
 
 
-parseShowOxigen :: Parser String Cmd
-parseShowOxigen = do
-  match "o" <|> match "oxigen"
-  return Show_Oxigen
+parseShowOxygen :: Parser String Cmd
+parseShowOxygen = do
+  match "o" <|> match "oxygen"
+  return Show_Oxygen
 
 
 ---- Parse a quit game command
