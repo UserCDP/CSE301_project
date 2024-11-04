@@ -11,35 +11,40 @@ import Data.Time.Clock
 
 --- Reseting the game
 
-a_tree :: Bin Item
-a_tree = B N (B N (B N (B (Key 1) Empty Empty) (B (Chest False 1 [Shovel, OxygenTank 1]) Empty Empty)) (B (Debris) (B N Empty Empty) (B N Empty Empty ))) (B N Empty Empty)
-
-resetGame :: Bin Item -> IO Game
+a_tree :: Bin NodeInfo
+a_tree = B NodeInfo{item=N,depth = 1} (B NodeInfo{item=N,depth = 15} Empty Empty) (B NodeInfo{item=N,depth = 1} (B NodeInfo{item=N,depth = 15} Empty Empty) (B NodeInfo{item=N,depth=1} Empty Empty))
+    
+    
+resetGame :: Bin NodeInfo -> IO Game
 resetGame a = do
     x <- getCurrentTime
-    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygenBoost = 0}
+    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygen = maxOxygen}
 
 
 ---- The Oxygen Logic
 
-getOxygen :: Game -> IO Double
-getOxygen game = do
+updateOxygen :: Game -> IO Game
+updateOxygen game = do
     now <- getCurrentTime
-    let ox = realToFrac (diffUTCTime now (initialTime game))
-    return (maxOxygen - ox + oxygenBoost game) 
-
+    let previousTime = (initialTime game)
+    let diff = realToFrac (diffUTCTime now previousTime)
+    let change = diff * getDepthAtNode (pos game)
+    return game{initialTime = now, oxygen = (oxygen game) - change}
 
 checkOxygen :: Game -> IO ()
-checkOxygen game = do
-    ox <- getOxygen game
-    if ox < 0 
+checkOxygen game1 = do
+    game <- updateOxygen game1
+    if (oxygen game) < 0 
         then do
              displayString "suffocated"
              return ()
     else checkOxygen game
 
 
----- Funtions manipulating nodes
+---- Functions manipulating nodes
+
+getDepthAtNode :: BinZip NodeInfo -> Double
+getDepthAtNode b = depth (getValAtNode b)
 
 getItemAtNode :: BinZip NodeInfo -> Item
 getItemAtNode b = item (getValAtNode b)
@@ -71,8 +76,8 @@ checkYouHaveItem x game = checkListContainsItemType x (inventory game)
 incrementNodeVisits :: BinZip NodeInfo -> BinZip NodeInfo
 incrementNodeVisits b = insertValAtNode b ((getValAtNode b) {visits = visits (getValAtNode b) + 1})
 
-resetMap :: Bin Item -> BinZip NodeInfo
-resetMap b = incrementNodeVisits (Hole, fmap (\x -> NodeInfo{item = x, visits = 0}) b)
+resetMap :: Bin NodeInfo -> BinZip NodeInfo
+resetMap b = incrementNodeVisits (Hole, fmap (\x -> x{item = (item x), visits = 0}) b)
 
 getExploredMap :: BinZip NodeInfo -> BinZip Void
 getExploredMap b = convertBoolBinZip (customfmap (\x-> visits x > 0) b)

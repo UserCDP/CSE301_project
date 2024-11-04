@@ -108,9 +108,9 @@ helpGamer game = do
 
 showOxygen :: Game -> IO Game
 showOxygen game = do
-  ox <- getOxygen game
-  displayStringWithVal "oxygenLeft" ox
+  displayStringWithVal "oxygenLeft" (oxygen game)
   return game
+
 
 
 

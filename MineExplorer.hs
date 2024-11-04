@@ -13,9 +13,10 @@ import System.Timeout (timeout)
 --- The game loop.     
 
 go :: Game -> IO (Maybe Game)
-go game1 = do
-  showCurrentNode game1
-  let game = game1 {newPos = False}
+go game2 = do
+  showCurrentNode game2
+  let game1 = game2 {newPos = False}
+  game <- updateOxygen game1
   putStr "> "                                      
   hFlush stdout
   result <- race (checkOxygen game) getLine  

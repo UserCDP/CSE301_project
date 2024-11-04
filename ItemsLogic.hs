@@ -82,7 +82,7 @@ useOxygenTank :: Item -> Game -> IO Game
 useOxygenTank (OxygenTank ox ) game = do
   if OxygenTank ox `elem` (inventory game) then do
     displayString "used oxygen tank"
-    return game{inventory = delete (OxygenTank ox) (inventory game), oxygenBoost = oxygenBoost game + 100}
+    return game{inventory = delete (OxygenTank ox) (inventory game), oxygen = (oxygen game) + 100}
   else do
     displayString "dont have oxygen tank"
     return game
