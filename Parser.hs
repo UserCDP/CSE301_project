@@ -59,11 +59,10 @@ parseCmd = parseClimb  <|> parseQuit <|> parseShowOxygen <|>
 -- Parse a moving command.
 parseClimb :: Parser String Cmd
 parseClimb = do
-  match "climb" <|> match "go"
-  (match "up" >> return Go_Up) <|>
+  match "climb" <|> match "go" <|> match "move"
+  (match "up" <|> match "back" >> return Go_Up) <|>
    (match "left" >> return Go_Left) <|>
    (match "right" >> return Go_Right)
-
 
 ---- Parse an item related command, which is either Use item or Get Item
 
