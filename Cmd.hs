@@ -64,7 +64,7 @@ useItem x game =
    case getItemType x of
     "Key" -> useKey x game
     "Shovel" -> useShovel game
-    "Oxygen" -> useOxygenTank x game
+    "Oxygen" -> useOxygenTank game
     _ -> do
       displayString "dont have object"
       return game

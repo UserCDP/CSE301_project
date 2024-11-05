@@ -84,8 +84,7 @@ parseUseOxygenTank :: Parser String Cmd
 parseUseOxygenTank = do
   match "use"
   match "oxygen" <|> match "o"
-  n <- number
-  return (Use (OxygenTank n))
+  return (Use OxygenTank)
 
 
 --- Parse a general use item command 
@@ -97,8 +96,8 @@ parseUseItem = do
 -- Parse a general get item command
 parseGetItem :: Parser String Cmd 
 parseGetItem = do
-  match "get" <|> match "pick up" <|> match "pickup"
-  match "key" <|> match "item" <|> match "shovel"
+  match "get" <|> match "check"
+  match "it" <|> match "item"
   return PickUp
 
 

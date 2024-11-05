@@ -16,10 +16,10 @@ go :: Game -> IO (Maybe Game)
 go game2 = do
   showCurrentNode game2
   let game1 = game2 {newPos = False}
-  game <- updateOxygen game1
   putStr "> "                                      
   hFlush stdout
-  result <- race (checkOxygen game) getLine  
+  result <- race (checkOxygen game1) getLine  
+  game <- updateOxygen game1
   case result of
     Left _ -> return Nothing
     Right line -> do
