@@ -4,75 +4,94 @@ import Data.Tree
 
 --- Data Type for map
 
-data Bin a = Empty | B a (Bin a) (Bin a)
+data Ter a = Empty | T a (Ter a) (Ter a) (Ter a)
   deriving (Show,Eq, Functor)
 
 
-data BinCxt a = Hole
-              | B0 a (BinCxt a) (Bin a)
-              | B1 a (Bin a) (BinCxt a)
+data TerCxt a = Hole
+              | T0 a (TerCxt a) (Ter a) (Ter a)
+              | T1 a (Ter a) (TerCxt a) (Ter a)
+              | T2 a (Ter a) (Ter a) (TerCxt a)
   deriving (Show,Eq, Functor)
 
 
 
-type BinZip a = (BinCxt a, Bin a)
+type TerZip a = (TerCxt a, Ter a)
 
 
 -- A function that checks in the value at the node
 
 
-customfmap :: (a -> b) -> BinZip a -> BinZip b
+customfmap :: (a -> b) -> TerZip a -> TerZip b
 customfmap f (c, t) = (fmap f c, fmap f t)
 
-getValAtNode :: BinZip a -> a
-getValAtNode (_,B x _ _) = x
+getValAtNode :: TerZip a -> a
+getValAtNode (_,T x _ _ _) = x
 
-insertValAtNode :: BinZip a -> a -> BinZip a
-insertValAtNode (c, B x t1 t2) y = (c, B y t1 t2)
+insertValAtNode :: TerZip a -> a -> TerZip a
+insertValAtNode (c, T x t1 t2 t3) y = (c, T y t1 t2 t3)
 
 
 --- A routine used to print the visible map
 
-data Void = Void deriving Show
+data Void = Void deriving (Show,Eq)
 
-convertBoolBin :: Bin Bool -> Bin Void
-convertBoolBin Empty = Empty
-convertBoolBin (B True t1 t2) = B Void (convertBoolBin t1) (convertBoolBin t2)
-convertBoolBin (B False _ _) = Empty
+convertBoolTer :: Ter Bool -> Ter Void
+convertBoolTer Empty = Empty
+convertBoolTer (T True t1 t2 t3) = T Void (convertBoolTer t1) (convertBoolTer t2) (convertBoolTer t3)
+convertBoolTer (T False _ _ _) = Empty
 
-convertBoolBinCxt :: BinCxt Bool -> BinCxt Void
-convertBoolBinCxt Hole = Hole
-convertBoolBinCxt (B0 False _ _) = Hole 
-convertBoolBinCxt (B1 False _ _) = Hole 
-convertBoolBinCxt (B0 True c t) = B0 Void (convertBoolBinCxt c) (convertBoolBin t)
-convertBoolBinCxt (B1 True t c) = B1 Void (convertBoolBin t) (convertBoolBinCxt c) 
+convertBoolTerCxt :: TerCxt Bool -> TerCxt Void
+convertBoolTerCxt Hole = Hole
+convertBoolTerCxt (T0 False _ _ _) = Hole 
+convertBoolTerCxt (T1 False _ _ _) = Hole 
+convertBoolTerCxt (T2 False _ _ _) = Hole
+convertBoolTerCxt (T0 True c t2 t3) = T0 Void (convertBoolTerCxt c) (convertBoolTer t2)  (convertBoolTer t3)
+convertBoolTerCxt (T1 True t1 c t3) = T1 Void (convertBoolTer t1) (convertBoolTerCxt c)  (convertBoolTer t3) 
+convertBoolTerCxt (T2 True t1 t2 c) = T2 Void (convertBoolTer t1) (convertBoolTer t2)  (convertBoolTerCxt c)
 
-convertBoolBinZip :: BinZip Bool -> BinZip Void
-convertBoolBinZip (c, t) = (convertBoolBinCxt c, convertBoolBin t)
+convertBoolTerZip :: TerZip Bool -> TerZip Void
+convertBoolTerZip (c, t) = (convertBoolTerCxt c, convertBoolTer t)
+
+getNonEmptyChildrenTer :: Eq a => Ter a -> [Ter a]
+getNonEmptyChildrenTer (T _ t1 t2 t3) = [ t | t <- [t1,t2,t3], t/= Empty] 
+
+getNonEmptyChildrenTerCxt :: Eq a => TerCxt a -> [Ter a]
+getNonEmptyChildrenTerCxt Hole = []
+getNonEmptyChildrenTerCxt (T0 _ c t2 t3) = [ t | t <- [t2,t3], t/= Empty]
+getNonEmptyChildrenTerCxt (T1 _ t1 c t3) = [ t | t <- [t1,t3], t/= Empty] 
+getNonEmptyChildrenTerCxt (T2 _ t1 t2 c) = [ t | t <- [t1,t2], t/= Empty]  
+
+getContext :: TerCxt a -> TerCxt a
+getContext Hole = Hole
+getContext (T0 _ c _ _) = c
+getContext (T1 _ _ c _) = c
+getContext (T2 _ _ _ c) = c
+
+
+getDepth :: TerZip a -> Double 
+getDepth (Hole, _) = 1
+getDepth (T0 x c t2 t3,t) = getDepth (c,T x t t2 t3)
+getDepth (T1 x t1 c t3,t) = getDepth (c,T x t1 t t3)
+getDepth (T2 x t1 t2 c,t) = 1 + getDepth (c,T x t1 t2 t)
 
 
 
-treeFromBin :: Show a => Bin a -> Tree String
-treeFromBin (B _ Empty Empty) = Node "*" []
-treeFromBin (B _ t1 Empty) =  Node "*" [treeFromBin t1]
-treeFromBin (B _ Empty t2)     = Node "*" [treeFromBin t2]
-treeFromBin (B x t1 t2) = Node "*" [treeFromBin t1,treeFromBin t2]
+treeFromTer :: (Eq a,Show a) => Ter a -> Tree String
+treeFromTer t = Node "*" (map (\x -> treeFromTer x) (getNonEmptyChildrenTer t))
 
-treeCxtFromBinCxt :: Show a => BinCxt a -> Tree String -> Tree String
-treeCxtFromBinCxt Hole      t = t
-treeCxtFromBinCxt (B0 x c Empty) t = treeCxtFromBinCxt c (Node "*" [t])
-treeCxtFromBinCxt (B0 x c t2) t = treeCxtFromBinCxt c (Node "*" [t, treeFromBin t2])
-treeCxtFromBinCxt (B1 x Empty c) t = treeCxtFromBinCxt c (Node "*" [t])
-treeCxtFromBinCxt (B1 x t1 c) t = treeCxtFromBinCxt c (Node "*" [treeFromBin t1, t])
+treeCxtFromTerCxt :: (Eq a,Show a) => TerCxt a -> Tree String -> Tree String
+treeCxtFromTerCxt Hole      t = t
+treeCxtFromTerCxt c t = treeCxtFromTerCxt (getContext c) (Node "*" $ (map (\x -> treeFromTer x) (getNonEmptyChildrenTerCxt c)) ++ [t])
 
-treeFromBinZip :: Show a => BinZip a -> Tree String
-treeFromBinZip (c,t) = treeCxtFromBinCxt c (t'{rootLabel=rootLabel t' ++ marker})
+treeFromTerZip :: (Eq a,Show a) => TerZip a -> Tree String
+treeFromTerZip (c,t) = treeCxtFromTerCxt c (t'{rootLabel=rootLabel t' ++ marker})
   where
-    t' = treeFromBin t
+    t' = treeFromTer t
     marker = "@ <--you"
 
-drawBin :: Show a => Bin a -> String
-drawBin = drawTree . treeFromBin
+drawTer :: (Eq a,Show a) => Ter a -> String
+drawTer = drawTree . treeFromTer
 
-drawBinZip :: Show a => BinZip a -> String
-drawBinZip = drawTree . treeFromBinZip
+drawTerZip :: (Eq a,Show a) => TerZip a -> String
+drawTerZip = drawTree . treeFromTerZip

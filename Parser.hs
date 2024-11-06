@@ -52,17 +52,20 @@ number = do
 -- parseCmd is our general-purpose parser for commands
 
 parseCmd :: Parser String Cmd
-parseCmd = parseClimb  <|> parseQuit <|> parseShowOxygen <|> 
+parseCmd = parseMove  <|> parseQuit <|> parseShowOxygen <|> 
            parseHelp <|> parseUseItem <|> parseGetItem  <|> parseCheckInventory
 
 
 -- Parse a moving command.
-parseClimb :: Parser String Cmd
-parseClimb = do
-  match "climb" <|> match "go" <|> match "move"
-  (match "up" <|> match "back" >> return Go_Up) <|>
+parseMove :: Parser String Cmd
+parseMove = do
+  match "go" <|> match "move"
+  (match "back" >> return Go_Back) <|>
    (match "left" >> return Go_Left) <|>
-   (match "right" >> return Go_Right)
+    (match "right" >> return Go_Right) <|>
+     (match "down" >> return Go_Down) <|>
+      (match "up" >> return Go_Up)
+   
 
 ---- Parse an item related command, which is either Use item or Get Item
 

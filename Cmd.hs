@@ -13,6 +13,8 @@ import ItemsLogic
 executeCommand :: Maybe Cmd -> (Game -> IO Game)
 executeCommand (Just Go_Left) = goLeft
 executeCommand (Just Go_Right) = goRight
+executeCommand (Just Go_Down) = goDown
+executeCommand (Just Go_Back) = goBack
 executeCommand (Just Go_Up) = goUp
 executeCommand (Just (Use x) ) = useItem x
 executeCommand (Just PickUp ) = getItem 
@@ -25,35 +27,54 @@ executeCommand Nothing = retakeCommand
 
 --- Implement movement commands
 goLeft :: Game -> IO Game
-goLeft game = if getItemType (getCurrentItem game) == "Debris" then do
-                displayString "blocked way"
-                return game
-                else
-                  case pos game of
-                    (c, B _ Empty _ ) -> do
-                      displayString "out of bounds"
-                      return game
-                    (c,B x t1 t2) -> return game { pos = incrementNodeVisits (B0 x c t2,t1), newPos = True} 
+goLeft game = 
+  case (pos game, lastMovement game) of
+    ((c, T _ Empty _ _ ), Go_Right) -> goBack game
+    ((c, T _ Empty _ _), _) -> do
+                               displayString "hit a wall"
+                               return game
+    ((c,T x t1 t2 t3),_) -> return game { pos = incrementNodeVisits (T0 x c t2 t3,t1), newPos = True, lastMovement = Go_Left}
+                  
+                  
                     
 
 goRight :: Game -> IO Game
-goRight game = if getCurrentItemType game == "Debris" then do
-                displayString "blocked way"
-                return game
-                else
-                  case pos game of
-                    (c, B _ _ Empty ) -> do
-                      displayString "out of bounds"
-                      return game
-                    (c,B x t1 t2) -> return game { pos = incrementNodeVisits (B1 x t1 c,t2), newPos = True} 
+goRight game = 
+  case (pos game, lastMovement game) of
+    ((c, T _ _ Empty _ ), Go_Left) -> goBack game
+    ((c, T _ _ Empty _), _) -> do
+                               displayString "hit a wall"
+                               return game
+    ((c,T x t1 t2 t3), _) -> return game { pos = incrementNodeVisits (T1 x t1 c t3,t2), newPos = True, lastMovement = Go_Right}
 
-goUp :: Game -> IO Game
-goUp game = case pos game of
-    (B0 x c t2,t) -> return game { pos = incrementNodeVisits (c,B x t t2), newPos = True}           
-    (B1 x t1 c,t) -> return game { pos = incrementNodeVisits (c,B x t1 t), newPos = True}            
+goDown :: Game -> IO Game
+goDown game =
+  case pos game of
+    (c, T _ _ _ Empty ) -> do
+                          displayString "out of bounds"
+                          return game           
+    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T2 x t1 t2 c,t3), newPos = True, depth = depth game + 1}
+
+
+
+goBack :: Game -> IO Game
+goBack game = case pos game of
+    (T0 x c t2 t3,t) -> return game { pos = incrementNodeVisits (c,T x t t2 t3), newPos = True}           
+    (T1 x t1 c t3,t) -> return game { pos = incrementNodeVisits (c,T x t1 t t3), newPos = True}
+    (T2 x t1 t2 c,t) -> return game { pos = incrementNodeVisits (c,T x t1 t2 t), newPos = True, depth = depth game - 1}           
     (Hole,t) -> do                                                                                   
          displayString "blocked entrance"
          return game
+
+goUp :: Game -> IO Game
+goUp game = case pos game of
+  (T2 x t1 t2 c,t) -> goBack game
+  (Hole,t) -> goBack game
+  _ -> do 
+    displayString "no up"
+    return game
+  
+
 
 
 --- Implement Interact commands
@@ -93,7 +114,7 @@ checkInventory game =
 quitGame :: Game -> IO Game
 quitGame game = do
     displayString "quit"
-    putStrLn $ drawBinZip $ getExploredMap $ pos game
+    putStrLn $ drawTerZip $ getExploredMap $ pos game
     return game {gameOver = True}
 
 retakeCommand :: Game -> IO Game

@@ -11,14 +11,15 @@ import Data.Time.Clock
 
 --- Reseting the game
 
-a_tree :: Bin NodeInfo
-a_tree = B NodeInfo{item=N,depth = 1} (B NodeInfo{item=N,depth = 15} Empty Empty) (B NodeInfo{item=N,depth = 1} (B NodeInfo{item=N,depth = 15} Empty Empty) (B NodeInfo{item=N,depth=1} Empty Empty))
+a_tree :: Ter Item
+a_tree = T N Empty (T N Empty (T N Empty Empty Empty) (T N (T N Empty Empty Empty) Empty (T N Empty Empty Empty))) Empty 
+
     
     
-resetGame :: Bin NodeInfo -> IO Game
+resetGame :: Ter Item -> IO Game
 resetGame a = do
     x <- getCurrentTime
-    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygen = maxOxygen}
+    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygen = maxOxygen, lastMovement = Go_Down, depth = 1}
 
 
 ---- The Oxygen Logic
@@ -28,7 +29,7 @@ updateOxygen game = do
     now <- getCurrentTime
     let previousTime = (initialTime game)
     let diff = realToFrac (diffUTCTime now previousTime)
-    let change = diff * getDepthAtNode (pos game)
+    let change = diff * (fromIntegral (depth game))
     return game{initialTime = now, oxygen = (oxygen game) - change}
 
 checkOxygen :: Game -> IO ()
@@ -43,27 +44,25 @@ checkOxygen game1 = do
 
 ---- Functions manipulating nodes
 
-getDepthAtNode :: BinZip NodeInfo -> Double
-getDepthAtNode b = depth (getValAtNode b)
 
-getItemAtNode :: BinZip NodeInfo -> Item
+getItemAtNode :: TerZip NodeInfo -> Item
 getItemAtNode b = item (getValAtNode b)
 
-getVisitsAtNode :: BinZip NodeInfo -> Int
+getVisitsAtNode :: TerZip NodeInfo -> Int
 getVisitsAtNode b = visits (getValAtNode b)
 
-removeItemAtNode :: BinZip NodeInfo -> BinZip NodeInfo
+removeItemAtNode :: TerZip NodeInfo -> TerZip NodeInfo
 removeItemAtNode b = insertValAtNode b ((getValAtNode b) {item = N})
 
 
-unlockChestAtNode :: BinZip NodeInfo -> BinZip NodeInfo
+unlockChestAtNode :: TerZip NodeInfo -> TerZip NodeInfo
 unlockChestAtNode b = 
     let v = (getValAtNode b) in
     case item v of
         Chest False id obj -> insertValAtNode b (v{item = Chest True id obj })
         _ -> b
 
-emptyChestAtNode :: BinZip NodeInfo -> BinZip NodeInfo
+emptyChestAtNode :: TerZip NodeInfo -> TerZip NodeInfo
 emptyChestAtNode b =
     let v = (getValAtNode b) in
     case item v of
@@ -73,14 +72,14 @@ emptyChestAtNode b =
 checkYouHaveItem :: String -> Game -> Bool
 checkYouHaveItem x game = checkListContainsItemType x (inventory game)
 
-incrementNodeVisits :: BinZip NodeInfo -> BinZip NodeInfo
+incrementNodeVisits :: TerZip NodeInfo -> TerZip NodeInfo
 incrementNodeVisits b = insertValAtNode b ((getValAtNode b) {visits = visits (getValAtNode b) + 1})
 
-resetMap :: Bin NodeInfo -> BinZip NodeInfo
-resetMap b = incrementNodeVisits (Hole, fmap (\x -> x{item = (item x), visits = 0}) b)
+resetMap :: Ter Item -> TerZip NodeInfo 
+resetMap b = incrementNodeVisits (Hole, fmap (\x -> NodeInfo{item = x, visits = 0}) b)
 
-getExploredMap :: BinZip NodeInfo -> BinZip Void
-getExploredMap b = convertBoolBinZip (customfmap (\x-> visits x > 0) b)
+getExploredMap :: TerZip NodeInfo -> TerZip Void
+getExploredMap b = convertBoolTerZip (customfmap (\x-> visits x > 0) b)
 
 getCurrentItem :: Game -> Item
 getCurrentItem game = getItemAtNode (pos game)
@@ -90,12 +89,13 @@ getCurrentItemType game = getItemType $ getCurrentItem game
 
 
 
+
 ----- Print stuff when reaching a node
 
 showCurrentNode :: Game -> IO ()
 showCurrentNode game =
     if newPos game then
-        putStrLn $ (showVisits game) ++ showItem (getCurrentItem game)
+        putStrLn $ (showVisits game) ++ showItem (getCurrentItem game) ++ "\nYou're currently at depth " ++ show(depth game)
     else return ()
 
 showVisits :: Game -> String
