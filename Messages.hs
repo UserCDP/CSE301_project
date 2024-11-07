@@ -30,7 +30,7 @@ messagesDict =
     Map.insert "no shovel" "You don't have any shovels. " $
     Map.insert "quit" "Quiting already? \nHere's the progress: " $
     Map.insert "parseError" "Sorry, please try again. Use h or help for some help. " $
-    Map.insert "helpString" "Type 'move', 'get', 'use', 'inventory', or 'oxygen' for the various commands. The command 'move' is followed by 'left', 'right', 'down', or 'up'. The command 'get' is followed by 'item' in order to pick up any item at the location. 'use' requires either the item followed by an ID (such as a key ID) or simply the item to use it. 'inventory' displays the inventory and, most impotantly, 'oxygen' displays the remaining units of seconds. " $
+    Map.insert "helpString" "Type 'move', 'get', 'use', 'inventory', or 'oxygen' for the various commands. \nThe command 'move' is followed by 'left', 'right', 'down', or 'up'. \nThe command 'get' is followed by 'item' in order to pick up any item at the location. \n'use' requires either the item followed by an ID (such as a key ID) or simply the item to use it. \n'inventory' displays the inventory and, most impotantly, 'oxygen' displays the remaining units of seconds. " $
     Map.insert "Debris" "The way is blocked by debris, use a shovel. " $
     Map.insert "Key" "There's a key here, it might be useful. " $
     Map.insert "Locked Chest" "There is a locked chest here with a key hole. " $
