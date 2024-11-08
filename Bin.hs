@@ -33,11 +33,12 @@ insertValAtNode (c, T x t1 t2 t3) y = (c, T y t1 t2 t3)
 
 isNodeLeaf :: TerZip a -> Bool
 isNodeLeaf (c,t) = case t of
-               (c, T _ Empty Empty Empty) -> True
+               T _ Empty Empty Empty -> True
                _ -> False
 
 atRoot :: TerZip a -> Bool
-atRoot (c,t) = c == Hole
+atRoot (Hole,_) = True
+atRoot (_,_) = False
 
 --- A routine used to print the visible map
 

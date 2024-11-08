@@ -64,15 +64,6 @@ useKey (Masterkey) game =
             displayString "no master"
             return game
     
-
-useOxygenTank :: Game -> IO Game
-useOxygenTank game = do
-  if OxygenTank `elem` (inventory game) then do
-    displayString "used oxygen tank"
-    return game{inventory = delete (OxygenTank) (inventory game), oxygen = (oxygen game) + 100}
-  else do
-    displayString "dont have oxygen tank"
-    return game
  
 
 checkChest :: Game -> IO Game

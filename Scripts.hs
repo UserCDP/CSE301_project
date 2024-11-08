@@ -122,11 +122,10 @@ showItem x =
     _ -> getString $ getItemType x
 
 
-
 ---- Winning function
 
 winGame :: Game -> IO Game
-winGame = do
+winGame game = do
     displayString "winMessage"
     putStrLn $ drawTerZip $ getExploredMap $ pos game
     return game {gameOver = True}

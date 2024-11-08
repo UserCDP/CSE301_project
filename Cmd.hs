@@ -36,13 +36,13 @@ goLeft game =
     (c, T _ Empty _ _) -> do
                                displayString "out of bounds"
                                return game
-    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T0 x c t2 t3,t1), newPos = True}
+    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T0 x c t2 t3,t1), newPos = True, depth = depth game + 1}
                   
                   
                     
 
-goRight :: Game -> IO Game
-goRight game = 
+goDown :: Game -> IO Game
+goDown game = 
   if getCurrentItemType (pos game) == "Debris" then do
     displayString "blocked way"
     return game
@@ -51,11 +51,11 @@ goRight game =
     (c, T _ _ Empty _) -> do
                                displayString "out of bounds"
                                return game
-    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T1 x t1 c t3,t2), newPos = True}
+    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T1 x t1 c t3,t2), newPos = True, depth = depth game + 1}
   
 
-goDown :: Game -> IO Game
-goDown game =
+goRight :: Game -> IO Game
+goRight game =
   if getCurrentItemType (pos game) == "Debris" then do
     displayString "blocked way"
     return game
