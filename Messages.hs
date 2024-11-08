@@ -46,6 +46,9 @@ messagesDict =
     Map.insert "inventory contains" "Your inventory contains: "$
     Map.insert "suffocated" "\nYou have gone mad in the crypt! You couldn't exit in time. " $
     Map.insert "oxygenLeft" "Sanity left: " $
+    Map.insert "atLeaf" "You cannot go down any further from here." $
+    Map.insert "not won yet" "This is the wrong place to use the key on! Go back to the entrance of the catacombs." $
+    Map.insert "no master" "You do not have the Masterkey to open the entrance of the catacombs." $
     Map.insert "winMessage" "Congratulations! \nYou have made it out of the crypt alive and with some sanity left in you. \nYou alerted the police of what happened and the serial killer that \nthrew you in the catacombs was apprehended by local law enforcement and will face 40 years in prison." $
     Map.insert "used oxygen tank" "Oxygen tank consumed. Your sanity has increased with a breath of fresh oxygen (even though it's air, not pure oxygen, you'd die otherwise,\nI mean seriously, who would say 'oxygen', you breathe air, not oxygen, nobody breathes oxygen,\nwell that's not true, and they don't even actually have oxygen tanks in crypts, how did you even find one? Was it just lying around?\nThat's stupidly irresponsible of whoever put that oxygen tank there, it's a fire hazard after all). " $
     Map.insert "dont have oxygen tank" "You don't have an oxygen tank. " $ Map.empty
