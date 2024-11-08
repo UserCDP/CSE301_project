@@ -16,7 +16,7 @@ data Cmd = Go_Left | Go_Right | Go_Down | Go_Up | Quit | Use Item | PickUp | Sho
 ---- Constants
 
 maxOxygen :: Double
-maxOxygen = 300.0
+maxOxygen = 600.0
 
 
 

@@ -75,12 +75,12 @@ parseUseKey = do
   n <- number
   return (Use (Key n))
 
-parseUseMap :: Parser String Cmd
-parseUseMap = do
-  match "check"
-  match "map"
-  n <- number
-  return (Use (Map n))
+parseUseMaster :: Parser String Cmd
+parseUseMaster = do
+  match "use"
+  match "master" <|> match "masterkey"
+  return (Use Masterkey)
+
 
 parseUseOxygenTank :: Parser String Cmd
 parseUseOxygenTank = do
@@ -92,7 +92,7 @@ parseUseOxygenTank = do
 --- Parse a general use item command 
 parseUseItem :: Parser String Cmd
 parseUseItem = do
-  parseUseKey <|> (match "use" >> match "shovel" >> return (Use Shovel)) <|> parseUseMap <|> parseUseOxygenTank
+  parseUseKey <|> (match "use" >> match "shovel" >> return (Use Shovel))  <|> parseUseOxygenTank <|> parseUseMaster
 
 
 -- Parse a general get item command

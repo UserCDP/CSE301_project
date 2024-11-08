@@ -15,8 +15,6 @@ a_tree :: Ter Item
 a_tree = T N (T N (T (Key 1) Empty Empty Empty) (T N (T N Empty Empty Empty) (T N Empty Empty Empty) Empty) Empty) 
              (T N (T N Empty Empty Empty) (T N Empty (T N Empty (T Debris Empty (T N Empty (T N Empty (T (Chest False 2 [Masterkey]) Empty Empty Empty) Empty) Empty) Empty) Empty) Empty) (T N (T Debris (T N Empty Empty Empty) Empty (T (Key 2) Empty Empty Empty)) Empty Empty))
              (T N (T N Empty (T N Empty (T (Chest False 1 [Shovel, OxygenTank]) Empty Empty Empty) Empty) (T N Empty Empty Empty)) (T N Empty (T N Empty Empty Empty) Empty) (T (Key 1) Empty Empty (T N Empty Empty Empty)))
-a_tree = T N Empty (T N Empty (T N Empty (T N (T (Key 1) Empty Empty Empty) Empty (T (Chest False 1 [OxygenTank]) Empty Empty Empty)) (T N Empty Empty Empty) ) Empty) Empty
-
     
     
 resetGame :: Ter Item -> IO Game
@@ -49,6 +47,9 @@ checkOxygen game1 = do
 
 isPlayerAtRoot :: Game -> Bool
 isPlayerAtRoot game = atRoot (pos game)
+
+isPlayerAtLeaf :: Game -> Bool
+isPlayerAtLeaf game = isNodeLeaf (pos game)
 
 
 getItemAtNode :: TerZip NodeInfo -> Item
@@ -99,10 +100,15 @@ getCurrentItemType game = getItemType $ getCurrentItem game
 
 ----- Print stuff when reaching a node
 
+showAtLeaf :: Game -> String
+showAtLeaf game = case isPlayerAtLeaf game of
+                    True -> getString "atLeaf"
+                    False -> ""
+
 showCurrentNode :: Game -> IO ()
 showCurrentNode game =
     if newPos game then
-        putStrLn $ (showVisits game) ++ showItem (getCurrentItem game) ++ "\nYou're currently at depth " ++ show(depth game)
+        putStrLn $ (showVisits game) ++ showItem (getCurrentItem game) ++ "\nYou're currently at depth " ++ show(depth game) ++ ". " ++ showAtLeaf game
     else return ()
 
 showVisits :: Game -> String

@@ -52,9 +52,9 @@ useKey (Key id) game =
             return game
 
 useKey (Masterkey) game =
-    let MasterBool = checkYouHaveItem "Masterkey" game in
-    let EntranceBool = isPlayerAtRoot game in
-    case (MasterBool, EntranceBool) of
+    let masterBool = checkYouHaveItem "Masterkey" game in
+    let entranceBool = isPlayerAtRoot game in
+    case (masterBool, entranceBool) of
         (True, True) -> do
             winGame game
         (True, False) -> do
@@ -104,7 +104,7 @@ useOxygenTank :: Game -> IO Game
 useOxygenTank game = do
   if OxygenTank `elem` (inventory game) then do
     displayString "used oxygen tank"
-    return game{inventory = delete (OxygenTank) (inventory game), oxygen = (oxygen game) + 100}
+    return game{inventory = delete (OxygenTank) (inventory game), oxygen = (oxygen game) + 300}
   else do
     displayString "dont have oxygen tank"
     return game

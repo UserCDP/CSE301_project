@@ -14,7 +14,6 @@ executeCommand :: Maybe Cmd -> (Game -> IO Game)
 executeCommand (Just Go_Left) = goLeft
 executeCommand (Just Go_Right) = goRight
 executeCommand (Just Go_Down) = goDown
-executeCommand (Just Go_Back) = goBack
 executeCommand (Just Go_Up) = goUp
 executeCommand (Just (Use x) ) = useItem x
 executeCommand (Just PickUp ) = getItem 
@@ -28,7 +27,7 @@ executeCommand Nothing = retakeCommand
 --- Implement movement commands
 goLeft :: Game -> IO Game
 goLeft game = 
-  if getCurrentItemType (pos game) == "Debris" then do
+  if getCurrentItemType game == "Debris" then do
     displayString "blocked way"
     return game
   else
@@ -43,7 +42,7 @@ goLeft game =
 
 goDown :: Game -> IO Game
 goDown game = 
-  if getCurrentItemType (pos game) == "Debris" then do
+  if getCurrentItemType game == "Debris" then do
     displayString "blocked way"
     return game
   else 
@@ -56,7 +55,7 @@ goDown game =
 
 goRight :: Game -> IO Game
 goRight game =
-  if getCurrentItemType (pos game) == "Debris" then do
+  if getCurrentItemType game == "Debris" then do
     displayString "blocked way"
     return game
   else
@@ -70,8 +69,8 @@ goRight game =
 
 goUp :: Game -> IO Game
 goUp game = case pos game of
-    (T0 x c t2 t3,t) -> return game { pos = incrementNodeVisits (c,T x t t2 t3), newPos = True}           
-    (T1 x t1 c t3,t) -> return game { pos = incrementNodeVisits (c,T x t1 t t3), newPos = True}
+    (T0 x c t2 t3,t) -> return game { pos = incrementNodeVisits (c,T x t t2 t3), newPos = True, depth = depth game - 1}           
+    (T1 x t1 c t3,t) -> return game { pos = incrementNodeVisits (c,T x t1 t t3), newPos = True, depth = depth game - 1}
     (T2 x t1 t2 c,t) -> return game { pos = incrementNodeVisits (c,T x t1 t2 t), newPos = True, depth = depth game - 1}           
     (Hole,t) -> do                                                                                   
          displayString "blocked entrance"
@@ -87,6 +86,7 @@ useItem x game =
     "Key" -> useKey x game
     "Shovel" -> useShovel game
     "Oxygen" -> useOxygenTank game
+    "Masterkey" -> useKey Masterkey game
     _ -> do
       displayString "dont have object"
       return game
