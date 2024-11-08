@@ -3,8 +3,7 @@ module Items where
 import Bin
 import System.IO
 
-data Item = N | Key Id | Debris | Chest Bool Id [Item] | Shovel | Map Id | OxygenTank   deriving (Show, Read, Eq)
-
+data Item = N | Key Id | Debris | Chest Bool Id [Item] | Shovel | Map Id | OxygenTank | Masterkey deriving (Show, Read, Eq)
 
 type Id = Int
 
@@ -17,6 +16,7 @@ getItemType z = case z of
   Shovel -> "Shovel"
   Map _ -> "Map"
   OxygenTank -> "Oxygen"
+  Masterkey -> "Masterkey"
   N -> ""
 
 

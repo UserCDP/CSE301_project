@@ -12,9 +12,16 @@ pickUpKey game =
         Key id -> do
             displayString "new key" 
             return game {pos = removeItemAtNode (pos game), inventory = (Key id : inventory game)}
+        
+        Masterkey -> do
+            displayString "master key" 
+            return game {pos = removeItemAtNode (pos game), inventory = (Masterkey : inventory game)}
+
         _ -> do
             displayString "no key here"
             return game
+
+
 
 
 useKey :: Item -> Game -> IO Game
@@ -43,6 +50,30 @@ useKey (Key id) game =
         _ -> do
             displayString "nothing to open"
             return game
+
+useKey (Masterkey) game =
+    let MasterBool = checkYouHaveItem "Masterkey" game in
+    let EntranceBool = isPlayerAtRoot game in
+    case (MasterBool, EntranceBool) of
+        (True, True) -> do
+            winGame game
+        (True, False) -> do
+            displayString "not won yet"
+            return game
+        (False, _ ) -> do
+            displayString "no master"
+            return game
+    
+
+useOxygenTank :: Game -> IO Game
+useOxygenTank game = do
+  if OxygenTank `elem` (inventory game) then do
+    displayString "used oxygen tank"
+    return game{inventory = delete (OxygenTank) (inventory game), oxygen = (oxygen game) + 100}
+  else do
+    displayString "dont have oxygen tank"
+    return game
+ 
 
 checkChest :: Game -> IO Game
 checkChest game =  

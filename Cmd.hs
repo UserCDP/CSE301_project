@@ -28,53 +28,54 @@ executeCommand Nothing = retakeCommand
 --- Implement movement commands
 goLeft :: Game -> IO Game
 goLeft game = 
-  case (pos game, lastMovement game) of
-    ((c, T _ Empty _ _ ), Go_Right) -> goBack game
-    ((c, T _ Empty _ _), _) -> do
-                               displayString "hit a wall"
+  if getCurrentItemType (pos game) == "Debris" then do
+    displayString "blocked way"
+    return game
+  else
+    case pos game of
+    (c, T _ Empty _ _) -> do
+                               displayString "out of bounds"
                                return game
-    ((c,T x t1 t2 t3),_) -> return game { pos = incrementNodeVisits (T0 x c t2 t3,t1), newPos = True, lastMovement = Go_Left}
+    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T0 x c t2 t3,t1), newPos = True}
                   
                   
                     
 
 goRight :: Game -> IO Game
 goRight game = 
-  case (pos game, lastMovement game) of
-    ((c, T _ _ Empty _ ), Go_Left) -> goBack game
-    ((c, T _ _ Empty _), _) -> do
-                               displayString "hit a wall"
+  if getCurrentItemType (pos game) == "Debris" then do
+    displayString "blocked way"
+    return game
+  else 
+    case pos game of
+    (c, T _ _ Empty _) -> do
+                               displayString "out of bounds"
                                return game
-    ((c,T x t1 t2 t3), _) -> return game { pos = incrementNodeVisits (T1 x t1 c t3,t2), newPos = True, lastMovement = Go_Right}
+    (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T1 x t1 c t3,t2), newPos = True}
+  
 
 goDown :: Game -> IO Game
 goDown game =
-  case pos game of
+  if getCurrentItemType (pos game) == "Debris" then do
+    displayString "blocked way"
+    return game
+  else
+    case pos game of
     (c, T _ _ _ Empty ) -> do
                           displayString "out of bounds"
                           return game           
     (c,T x t1 t2 t3) -> return game { pos = incrementNodeVisits (T2 x t1 t2 c,t3), newPos = True, depth = depth game + 1}
+  
 
 
-
-goBack :: Game -> IO Game
-goBack game = case pos game of
+goUp :: Game -> IO Game
+goUp game = case pos game of
     (T0 x c t2 t3,t) -> return game { pos = incrementNodeVisits (c,T x t t2 t3), newPos = True}           
     (T1 x t1 c t3,t) -> return game { pos = incrementNodeVisits (c,T x t1 t t3), newPos = True}
     (T2 x t1 t2 c,t) -> return game { pos = incrementNodeVisits (c,T x t1 t2 t), newPos = True, depth = depth game - 1}           
     (Hole,t) -> do                                                                                   
          displayString "blocked entrance"
          return game
-
-goUp :: Game -> IO Game
-goUp game = case pos game of
-  (T2 x t1 t2 c,t) -> goBack game
-  (Hole,t) -> goBack game
-  _ -> do 
-    displayString "no up"
-    return game
-  
-
 
 
 --- Implement Interact commands

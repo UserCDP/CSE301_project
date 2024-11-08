@@ -12,14 +12,14 @@ import Data.Time.Clock
 --- Reseting the game
 
 a_tree :: Ter Item
-a_tree = T N Empty (T N Empty (T N Empty Empty Empty) (T N (T N Empty Empty Empty) Empty (T N Empty Empty Empty))) Empty 
+a_tree = T N Empty (T N Empty (T N Empty (T N (T (Key 1) Empty Empty Empty) Empty (T (Chest False 1 [OxygenTank]) Empty Empty Empty)) (T N Empty Empty Empty) ) Empty) Empty
 
     
     
 resetGame :: Ter Item -> IO Game
 resetGame a = do
     x <- getCurrentTime
-    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygen = maxOxygen, lastMovement = Go_Down, depth = 1}
+    return Game { gameOver = False, pos = resetMap a , newPos = False, inventory = [], initialTime = x, oxygen = maxOxygen, depth = 1}
 
 
 ---- The Oxygen Logic
@@ -43,6 +43,9 @@ checkOxygen game1 = do
 
 
 ---- Functions manipulating nodes
+
+isPlayerAtRoot :: Game -> Bool
+isPlayerAtRoot game = atRoot (pos game)
 
 
 getItemAtNode :: TerZip NodeInfo -> Item
@@ -90,6 +93,7 @@ getCurrentItemType game = getItemType $ getCurrentItem game
 
 
 
+
 ----- Print stuff when reaching a node
 
 showCurrentNode :: Game -> IO ()
@@ -113,3 +117,14 @@ showItem x =
     Chest True _ [] -> getString "Unlocked Empty Chest"
     Chest True _ _ -> getString "Unlocked Full Chest"
     _ -> getString $ getItemType x
+
+
+
+---- Winning function
+
+winGame :: Game -> IO Game
+winGame = do
+    displayString "winMessage"
+    putStrLn $ drawTerZip $ getExploredMap $ pos game
+    return game {gameOver = True}
+

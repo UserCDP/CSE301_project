@@ -31,6 +31,13 @@ getValAtNode (_,T x _ _ _) = x
 insertValAtNode :: TerZip a -> a -> TerZip a
 insertValAtNode (c, T x t1 t2 t3) y = (c, T y t1 t2 t3)
 
+isNodeLeaf :: TerZip a -> Bool
+isNodeLeaf (c,t) = case t of
+               (c, T _ Empty Empty Empty) -> True
+               _ -> False
+
+atRoot :: TerZip a -> Bool
+atRoot (c,t) = c == Hole
 
 --- A routine used to print the visible map
 
@@ -90,8 +97,16 @@ treeFromTerZip (c,t) = treeCxtFromTerCxt c (t'{rootLabel=rootLabel t' ++ marker}
     t' = treeFromTer t
     marker = "@ <--you"
 
-drawTer :: (Eq a,Show a) => Ter a -> String
-drawTer = drawTree . treeFromTer
+printTree :: Tree String -> String
+printTree node = go node "" True
+  where
+    -- Recursive helper function to print each node
+    go :: Tree String -> String -> Bool -> String
+    go (Node desc cs) prefix isLast =
+        -- Print the node name and description
+        prefix ++ (if isLast then "└── " else "├── ") ++ " (" ++ desc ++ ")\n" ++
+        -- Traverse the children with updated prefixes
+        concatMap (\(c, i) -> go c (prefix ++ (if isLast then "    " else "│   ")) (i == length cs - 1)) (zip cs [0..])
 
-drawTerZip :: (Eq a,Show a) => TerZip a -> String
-drawTerZip = drawTree . treeFromTerZip
+drawTerZip :: (Eq a, Show a) => TerZip a -> String
+drawTerZip = drawTree. treeFromTerZip

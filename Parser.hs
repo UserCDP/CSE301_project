@@ -60,11 +60,10 @@ parseCmd = parseMove  <|> parseQuit <|> parseShowOxygen <|>
 parseMove :: Parser String Cmd
 parseMove = do
   match "go" <|> match "move"
-  (match "back" >> return Go_Back) <|>
-   (match "left" >> return Go_Left) <|>
+  (match "left" >> return Go_Left) <|>
     (match "right" >> return Go_Right) <|>
      (match "down" >> return Go_Down) <|>
-      (match "up" >> return Go_Up)
+      ((match "up" <|> match "back") >> return Go_Up)
    
 
 ---- Parse an item related command, which is either Use item or Get Item
@@ -121,7 +120,7 @@ parseHelp = do
 
 parseShowOxygen :: Parser String Cmd
 parseShowOxygen = do
-  match "o" <|> match "oxygen"
+  match "s" <|> match "sanity"
   return Show_Oxygen
 
 
