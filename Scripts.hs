@@ -107,9 +107,9 @@ showCurrentNode game =
 
 showVisits :: Game -> String
 showVisits game 
-   | v < 5 = getString "initialVisit"
-   | v > 4 && v < 7 = getString "familiarPlace"
-   | v > 6 = getString "lost"
+   | v < 3 = getString "initialVisit"
+   | v > 2 && v < 5 = getString "familiarPlace"
+   | v > 4 = getString "lost"
    where 
     v = visits $ getValAtNode $ pos game
 
