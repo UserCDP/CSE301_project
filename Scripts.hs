@@ -12,6 +12,9 @@ import Data.Time.Clock
 --- Reseting the game
 
 a_tree :: Ter Item
+a_tree = T N (T N (T (Key 1) Empty Empty Empty) (T N (T N Empty Empty Empty) (T N Empty Empty Empty) Empty) Empty) 
+             (T N (T N Empty Empty Empty) (T N Empty (T N Empty (T Debris Empty (T N Empty (T N Empty (T (Chest False 2 [Masterkey]) Empty Empty Empty) Empty) Empty) Empty) Empty) Empty) (T N (T Debris (T N Empty Empty Empty) Empty (T (Key 2) Empty Empty Empty)) Empty Empty))
+             (T N (T N Empty (T N Empty (T (Chest False 1 [Shovel, OxygenTank]) Empty Empty Empty) Empty) (T N Empty Empty Empty)) (T N Empty (T N Empty Empty Empty) Empty) (T (Key 1) Empty Empty (T N Empty Empty Empty)))
 a_tree = T N Empty (T N Empty (T N Empty (T N (T (Key 1) Empty Empty Empty) Empty (T (Chest False 1 [OxygenTank]) Empty Empty Empty)) (T N Empty Empty Empty) ) Empty) Empty
 
     
