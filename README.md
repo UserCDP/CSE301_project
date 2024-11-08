@@ -1,5 +1,5 @@
 # Concept of the game
-This is a text based adventure game. You are locked in a mine, represented as a binary tree, and your goal is to navigate through it, find useful items, pass through obstacles and eventually find your way out of it.
+This is a text based adventure game. You are locked in a crypt, represented as a ternary tree, and your goal is to navigate through it, find useful items, pass through obstacles and eventually find your way out of it.
 
 # Concepts implemented so far
 
@@ -10,7 +10,7 @@ Download the files of the game, go to the directory of the game and run `ghci Mi
 then run the `main` function. If you have any issues with the packages follow the instructions and then rerun `:l MineExplorer.hs` inside `ghci`.
 
 ### How the engine is structured
-The position within the map is stored as a BinTree Zip data type.
+The position within the map is stored as a TerTree Zip data type.
 
 Each node of this tree contains a value of type NodeInfo, which is a record keeping track of an item and the number of visits at that node, respectively.
 
@@ -23,11 +23,6 @@ All functions that modify the game state (mainly `COMMANDS` of the player) are o
 *YOU DO NOT NEED TO TOUCH THIS FILE*
 
 This file contains the main game loop, implemented as a function which takes in an initial game state and recursively applies itself to a new game state, obtained by modifying the original state according to the commands it receives.
-
-Conditions to end the game: 
-- The oxigen level reaches below 0
-- The variable gameOver is set to True.
-
 
 ## [GameData.hs](GameData.hs)
 
